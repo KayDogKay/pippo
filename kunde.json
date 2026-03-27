@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "siteTitle": "Hausmeisterservice Philipp Dehnhardt",
+    "siteDescription": "Garten- und Landschaftsbau sowie Renovierung und Innenausbau – zuverlässig, sauber und professionell ausgeführt.",
+    "brandLabel": "Praktisch KAD",
+    "lang": "de"
+  },
+  "firma": {
+    "name": "Hausmeisterservice Philipp Dehnhardt",
+    "inhaber": "Philipp Dehnhardt",
+    "anrede": "Sie",
+    "standort": "Region [Standort einfügen]",
+    "plz": "[PLZ]",
+    "ort": "[Ort]",
+    "strasse": "[Straße Nr.]",
+    "ustIdNr": "DE[XXXXXXXXX]",
+    "gewerk": "Hausmeisterservice · Garten & Innenausbau"
+  },
+  "kontakt": {
+    "telefon": "+49 XXX XXXXXXXX",
+    "telefonAnzeige": "+49 XXX XXXXXXXX",
+    "whatsappLink": "https://wa.me/49XXXXXXXXXX?text=Hallo%20Herr%20Dehnhardt%2C%20ich%20habe%20Interesse%20an%20Ihren%20Leistungen.",
+    "whatsappAnzeige": "WhatsApp"
+  },
+  "hero": {
+    "badge": "Hausmeisterservice · Seit [Jahr]",
+    "headline": "Ihr Grundstück. Ihr Zuhause. In den richtigen Händen.",
+    "subline": "Ich übernehme die Aufgaben, für die andere keine Zeit haben – vom gepflegten Garten bis zum fertig renovierten Raum. Sauber ausgeführt, pünktlich geliefert, ohne Überraschungen.",
+    "ctaPrimary": {
+      "label": "Jetzt anfragen",
+      "action": "whatsapp"
+    },
+    "ctaSecondary": {
+      "label": "Leistungen ansehen",
+      "anchor": "#leistungen"
+    },
+    "statBadges": [
+      { "wert": "100%", "label": "Zuverlässigkeit" },
+      { "wert": "Solo", "label": "Direkt mit dem Experten" },
+      { "wert": "Festpreis", "label": "Auf Anfrage möglich" }
+    ]
+  },
+  "leistungen": {
+    "headline": "Was ich für Sie erledige",
+    "subline": "Zwei Kernbereiche. Ein Ansprechpartner. Kein Weitervermitteln.",
+    "kacheln": [
+      {
+        "id": "gala",
+        "icon": "🌿",
+        "titel": "Garten- & Landschaftsbau",
+        "beschreibung": "Ob Neuanlage, Pflege oder saisonale Umgestaltung – ich bringe Ordnung und Struktur in Ihr Außengelände. Rasenpflege, Heckenschnitt, Bepflanzung und Wegebau gehören genauso dazu wie die Pflege Ihres Bestandsgartens über das ganze Jahr.",
+        "size": "large",
+        "highlights": ["Neuanlage & Umgestaltung", "Rasenpflege & Heckenschnitt", "Wegebau & Pflasterung", "Saisonale Bepflanzung"]
+      },
+      {
+        "id": "renovierung",
+        "icon": "🔨",
+        "titel": "Renovierung",
+        "beschreibung": "Wände streichen, Böden verlegen, Fliesen setzen – ich erledige handwerkliche Renovierungsarbeiten, die Ihre Immobilie aufwerten und den Alltag vereinfachen.",
+        "size": "medium",
+        "highlights": ["Malerarbeiten innen & außen", "Bodenbeläge verlegen", "Fliesen & Fugensanierung"]
+      },
+      {
+        "id": "innenausbau",
+        "icon": "🏠",
+        "titel": "Innenausbau",
+        "beschreibung": "Trockenbau, Wanddurchbrüche, Einbauschränke oder Abkofferungen – ich setze Ihren Innenausbau handwerklich sauber um und koordiniere mich bei Bedarf mit Ihrem Architekt oder Planer.",
+        "size": "medium",
+        "highlights": ["Trockenbau & Leichtbauarbeiten", "Einbaulösungen", "Wandgestaltung & Verkleidungen"]
+      },
+      {
+        "id": "hausmeister",
+        "icon": "🔧",
+        "titel": "Hausmeisterdienste",
+        "beschreibung": "Kleinreparaturen, Entrümpelung, Winterdienst, Montagearbeiten – als Ihr verlässlicher Hausmeister kümmere ich mich um die Dinge, die regelmäßig anfallen und sonst liegen bleiben.",
+        "size": "wide",
+        "highlights": ["Kleinreparaturen aller Art", "Montage & Demontage", "Winterdienst auf Anfrage", "Entrümpelung"]
+      }
+    ]
+  },
+  "ueber": {
+    "headline": "Direkt. Persönlich. Verlässlich.",
+    "subline": "Kein Büro, das Sie weiterverbindet. Kein Subunternehmer, den Sie nie gesehen haben.",
+    "absatz1": "Ich bin Philipp Dehnhardt – und wenn ich Ihnen einen Termin gebe, dann komme ich auch. Ich arbeite allein, weil mir das die volle Kontrolle über meine Arbeit gibt. Sie wissen von Anfang an, wer auf Ihrem Grundstück ist und wer Ihr Projekt umsetzt.",
+    "absatz2": "Mein Leistungsbereich umfasst Garten- und Landschaftsbau sowie Renovierung und Innenausbau – zwei Felder, die ich mit derselben Sorgfalt angehe: präzise vorbereitet, sauber ausgeführt, transparent kommuniziert.",
+    "werte": [
+      { "icon": "✓", "label": "Terminzuverlässigkeit" },
+      { "icon": "✓", "label": "Transparente Preise" },
+      { "icon": "✓", "label": "Saubere Ausführung" },
+      { "icon": "✓", "label": "Direktkommunikation" }
+    ]
+  },
+  "galerie": {
+    "headline": "Abgeschlossene Projekte",
+    "subline": "Bilder folgen – aussagekräftige Referenzfotos werden hier platziert.",
+    "platzhalterAnzahl": 6
+  },
+  "einsatzgebiet": {
+    "headline": "Einsatzgebiet",
+    "beschreibung": "Ich bin in [Ort] und Umgebung tätig. Für Anfragen außerhalb des Kerngebiets sprechen Sie mich direkt an – ich finde eine Lösung.",
+    "kartenZentrum": {
+      "lat": 51.1657,
+      "lng": 10.4515,
+      "zoom": 10
+    }
+  },
+  "footer": {
+    "tagline": "Handwerk, das bleibt.",
+    "impressum": {
+      "headline": "Impressum",
+      "inhalt": [
+        "Angaben gemäß § 5 TMG",
+        "Philipp Dehnhardt",
+        "Hausmeisterservice Philipp Dehnhardt",
+        "[Straße Nr.]",
+        "[PLZ] [Ort]",
+        "Telefon: [Telefonnummer]",
+        "E-Mail: [E-Mail einfügen]",
+        "Umsatzsteuer-ID: DE[XXXXXXXXX] (sofern vorhanden)",
+        "Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV: Philipp Dehnhardt, [Adresse wie oben]"
+      ]
+    },
+    "datenschutz": {
+      "headline": "Datenschutzerklärung",
+      "inhalt": [
+        "Diese Website erhebt und verarbeitet keine personenbezogenen Daten über Kontaktformulare. Bei direkter Kontaktaufnahme per Telefon oder WhatsApp gelten die Datenschutzbestimmungen von WhatsApp Inc. (Meta Platforms) bzw. die Bestimmungen Ihres Telefonanbieters.",
+        "Verantwortlicher im Sinne der DSGVO: Philipp Dehnhardt, [vollständige Adresse].",
+        "Diese Datenschutzerklärung ist ein Platzhalter und muss durch eine rechtskonforme, individuell geprüfte Version ersetzt werden (z. B. über einen Datenschutz-Generator oder einen Rechtsanwalt)."
+      ]
+    },
+    "copyright": "© [Jahr] Hausmeisterservice Philipp Dehnhardt. Alle Rechte vorbehalten."
+  }
+}

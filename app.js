@@ -1,460 +1,214 @@
-/**
- * app.js – Praktisch KAD
- * Hausmeisterservice Philipp Dehnhardt
- *
- * Responsibilities:
- *  1. Fetch data from kunde.json
- *  2. Inject content into DOM mount points
- *  3. IntersectionObserver reveal-on-scroll with stagger
- *  4. Sticky header on scroll
- *  5. Mobile nav burger toggle
- *  6. Loader dismiss
- */
-
-/* ═══════════════════════════════════════════════════════════════
-   1.  BOOTSTRAP
-   ═══════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  fetchData()
-    .then(data => {
-      renderAll(data);
-      initScrollReveal();
-      initStickyHeader();
-      initMobileNav();
-      initAnchorLinks();
-      hideLoader();
-    })
-    .catch(err => {
-      console.error('[KAD] Fehler beim Laden der Daten:', err);
-      hideLoader(); // hide loader even on error so page isn't frozen
-      showErrorBanner();
-    });
-});
-
-/* ═══════════════════════════════════════════════════════════════
-   2.  DATA LAYER
-   ═══════════════════════════════════════════════════════════════ */
-async function fetchData() {
-  const response = await fetch('kunde.json');
-  if (!response.ok) throw new Error(`HTTP ${response.status}: kunde.json konnte nicht geladen werden.`);
-  return response.json();
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   3.  RENDER ORCHESTRATOR
-   ═══════════════════════════════════════════════════════════════ */
-function renderAll(d) {
-  renderMeta(d.meta, d.firma);
-  renderNav(d.firma, d.kontakt);
-  renderHero(d.hero, d.kontakt);
-  renderLeistungen(d.leistungen);
-  renderUeber(d.ueber);
-  renderGalerie(d.galerie);
-  renderEinsatzgebiet(d.einsatzgebiet);
-  renderFooter(d.footer, d.kontakt);
-  renderStickyBar(d.kontakt);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   4.  SECTION RENDERERS
-   ═══════════════════════════════════════════════════════════════ */
-
-/** 4.1 META / HEAD */
-function renderMeta(meta, firma) {
-  setTitle('page-title', meta.siteTitle);
-  setAttr('meta-description', 'content', meta.siteDescription);
-  setAttr('og-title', 'content', meta.siteTitle);
-  setAttr('og-description', 'content', meta.siteDescription);
-  document.documentElement.setAttribute('lang', meta.lang || 'de');
-}
-
-/** 4.2 NAVIGATION */
-function renderNav(firma, kontakt) {
-  setText('nav-brand-label', firma.name);
-  const ctaBtn = document.getElementById('nav-cta-btn');
-  if (ctaBtn) {
-    ctaBtn.href = kontakt.whatsappLink;
-    ctaBtn.setAttribute('target', '_blank');
-    ctaBtn.setAttribute('rel', 'noopener noreferrer');
-  }
-}
-
-/** 4.3 HERO */
-function renderHero(hero, kontakt) {
-  setText('hero-badge', hero.badge);
-
-  // Parse headline – wrap text in <em> if it contains a marker (*..*)
-  const hl = document.getElementById('hero-headline');
-  if (hl) hl.innerHTML = parseEmphasis(hero.headline);
-
-  setText('hero-subline', hero.subline);
-
-  const actions = document.getElementById('hero-actions');
-  if (actions) {
-    const primaryHref = hero.ctaPrimary.action === 'whatsapp'
-      ? kontakt.whatsappLink
-      : `tel:${kontakt.telefon}`;
-
-    actions.innerHTML = `
-      <a href="${esc(primaryHref)}"
-         class="btn btn--accent"
-         target="_blank"
-         rel="noopener noreferrer">
-        ${esc(hero.ctaPrimary.label)}
-      </a>
-      <a href="${esc(hero.ctaSecondary.anchor)}" class="btn btn--ghost">
-        ${esc(hero.ctaSecondary.label)}
-      </a>
-    `;
-  }
-
-  const stats = document.getElementById('hero-stats');
-  if (stats && hero.statBadges?.length) {
-    stats.innerHTML = hero.statBadges.map(s => `
-      <div class="hero__stat">
-        <span class="hero__stat-val">${esc(s.wert)}</span>
-        <span class="hero__stat-label">${esc(s.label)}</span>
-      </div>
-    `).join('');
-  }
-}
-
-/** 4.4 LEISTUNGEN (Bento Grid) */
-function renderLeistungen(leistungen) {
-  setText('leistungen-headline', leistungen.headline);
-  setText('leistungen-subline', leistungen.subline);
-
-  const grid = document.getElementById('leistungen-grid');
-  if (!grid) return;
-
-  grid.innerHTML = leistungen.kacheln.map((k, i) => {
-    const delay = i * 80; // stagger base – refined by JS observer
-    const isWide = k.size === 'wide';
-
-    const highlightsHTML = k.highlights?.length
-      ? `<div class="bento-tile__highlights" role="list">
-          ${k.highlights.map(h => `<span class="bento-tag" role="listitem">${esc(h)}</span>`).join('')}
-         </div>`
-      : '';
-
-    if (isWide) {
-      return `
-        <article class="bento-tile bento-tile--wide glass-card reveal" 
-                 data-delay="${delay}" 
-                 role="listitem"
-                 aria-label="${esc(k.titel)}">
-          <span class="bento-tile__icon" aria-hidden="true">${k.icon}</span>
-          <div class="bento-tile__content">
-            <h3 class="bento-tile__title">${esc(k.titel)}</h3>
-            <p class="bento-tile__desc">${esc(k.beschreibung)}</p>
-          </div>
-          <div class="bento-tile__highlights" role="list">
-            ${(k.highlights || []).map(h => `<span class="bento-tag" role="listitem">${esc(h)}</span>`).join('')}
-          </div>
-        </article>`;
+{
+  "meta": {
+    "siteName": "Hausmeisterservice Philipp Dehnhardt",
+    "pages": {
+      "index":       { "title": "Hausmeisterservice Philipp Dehnhardt – Garten, Renovierung & Innenausbau", "description": "Professioneller Hausmeisterservice: Garten- und Landschaftsbau, Renovierung und Innenausbau. Zuverlässig, sauber und termingerecht. Jetzt Angebot anfragen." },
+      "leistungen":  { "title": "Leistungen – Hausmeisterservice Philipp Dehnhardt", "description": "Meine Leistungen im Überblick: Garten- und Landschaftsbau, Renovierungsarbeiten und Innenausbau – alles aus einer Hand." },
+      "fotos":       { "title": "Referenzfotos – Hausmeisterservice Philipp Dehnhardt", "description": "Einblicke in meine Arbeit: abgeschlossene Projekte in den Bereichen Garten, Renovierung und Innenausbau." },
+      "kontakt":     { "title": "Kontakt – Hausmeisterservice Philipp Dehnhardt", "description": "Rufen Sie mich direkt an oder schreiben Sie mir via WhatsApp. Ich melde mich schnell und persönlich." },
+      "impressum":   { "title": "Impressum – Hausmeisterservice Philipp Dehnhardt", "description": "Rechtliche Informationen gemäß § 5 TMG." },
+      "datenschutz": { "title": "Datenschutzerklärung – Hausmeisterservice Philipp Dehnhardt", "description": "Datenschutzerklärung gemäß DSGVO." }
     }
+  },
 
-    return `
-      <article class="bento-tile bento-tile--${k.size} glass-card reveal"
-               data-delay="${delay}"
-               role="listitem"
-               aria-label="${esc(k.titel)}">
-        <span class="bento-tile__icon" aria-hidden="true">${k.icon}</span>
-        <h3 class="bento-tile__title">${esc(k.titel)}</h3>
-        <p class="bento-tile__desc">${esc(k.beschreibung)}</p>
-        ${highlightsHTML}
-      </article>`;
-  }).join('');
-}
-
-/** 4.5 ÜBER MICH */
-function renderUeber(ueber) {
-  setText('ueber-headline', ueber.headline);
-  setText('ueber-subline', ueber.subline);
-  setText('ueber-absatz1', ueber.absatz1);
-  setText('ueber-absatz2', ueber.absatz2);
-
-  const werteList = document.getElementById('ueber-werte');
-  if (werteList && ueber.werte?.length) {
-    werteList.innerHTML = ueber.werte.map(w => `
-      <li class="ueber__wert">
-        <span class="ueber__wert-icon" aria-hidden="true">${esc(w.icon)}</span>
-        <span>${esc(w.label)}</span>
-      </li>
-    `).join('');
-  }
-}
-
-/** 4.6 GALERIE */
-function renderGalerie(galerie) {
-  setText('galerie-headline', galerie.headline);
-  setText('galerie-subline', galerie.subline);
-
-  const grid = document.getElementById('galerie-grid');
-  if (!grid) return;
-
-  grid.innerHTML = Array.from({ length: galerie.platzhalterAnzahl }, (_, i) => `
-    <div class="galerie__item reveal" 
-         data-delay="${i * 60}"
-         role="listitem" 
-         aria-label="Projektbild ${i + 1} – Platzhalter">
-      <span class="galerie__placeholder-icon" aria-hidden="true">📷</span>
-      <span class="galerie__placeholder-text">Foto ${i + 1}</span>
-    </div>
-  `).join('');
-}
-
-/** 4.7 EINSATZGEBIET */
-function renderEinsatzgebiet(einsatz) {
-  setText('einsatz-headline', einsatz.headline);
-  setText('einsatz-subline', einsatz.beschreibung);
-}
-
-/** 4.8 FOOTER */
-function renderFooter(footer, kontakt) {
-  setText('footer-tagline', footer.tagline);
-  setText('footer-copyright', footer.copyright);
-
-  // Impressum
-  setText('impressum-headline', footer.impressum.headline);
-  const impressumBody = document.getElementById('impressum-body');
-  if (impressumBody) {
-    impressumBody.innerHTML = footer.impressum.inhalt
-      .map(line => `<p>${esc(line)}</p>`)
-      .join('');
-  }
-
-  // Datenschutz
-  setText('datenschutz-headline', footer.datenschutz.headline);
-  const datenschutzBody = document.getElementById('datenschutz-body');
-  if (datenschutzBody) {
-    datenschutzBody.innerHTML = footer.datenschutz.inhalt
-      .map(line => `<p>${esc(line)}</p>`)
-      .join('');
-  }
-
-  // Contact buttons in footer
-  const socials = document.getElementById('footer-socials');
-  if (socials) {
-    socials.innerHTML = `
-      <a href="${esc(kontakt.whatsappLink)}"
-         class="footer__social-btn"
-         target="_blank" rel="noopener noreferrer"
-         aria-label="Per WhatsApp kontaktieren">
-        WhatsApp
-      </a>
-      <a href="tel:${esc(kontakt.telefon)}"
-         class="footer__social-btn"
-         aria-label="Jetzt anrufen ${esc(kontakt.telefonAnzeige)}">
-        ${esc(kontakt.telefonAnzeige)}
-      </a>
-    `;
-  }
-}
-
-/** 4.9 STICKY ACTION BAR */
-function renderStickyBar(kontakt) {
-  const callBtn = document.getElementById('sticky-call-btn');
-  const waBtn = document.getElementById('sticky-whatsapp-btn');
-
-  if (callBtn) callBtn.href = `tel:${kontakt.telefon}`;
-  if (waBtn) {
-    waBtn.href = kontakt.whatsappLink;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   5.  SCROLL REVEAL  (IntersectionObserver)
-   ═══════════════════════════════════════════════════════════════ */
-function initScrollReveal() {
-  // Respect prefers-reduced-motion
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.querySelectorAll('.reveal').forEach(el => {
-      el.classList.add('is-visible');
-    });
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-
-        const el = entry.target;
-        const delay = parseInt(el.dataset.delay || '0', 10);
-
-        setTimeout(() => {
-          el.classList.add('is-visible');
-        }, delay);
-
-        // Unobserve after revealing – no repeated resets
-        observer.unobserve(el);
-      });
-    },
-    {
-      root: null,
-      rootMargin: '0px 0px -60px 0px', // trigger slightly before bottom of viewport
-      threshold: 0.12,
+  "firma": {
+    "name":        "Hausmeisterservice Philipp Dehnhardt",
+    "inhaber":     "Philipp Dehnhardt",
+    "telefon":     "+49 171 1083149",
+    "telefonRaw":  "491711083149",
+    "whatsapp":    "491711083149",
+    "email":       "info@hausmeisterservice-dehnhardt.de",
+    "adresse": {
+      "strasse": "[Straße und Hausnummer bitte eintragen]",
+      "plz":     "[PLZ]",
+      "ort":     "[Ort]"
     }
-  );
+  },
 
-  // Observe all .reveal elements with auto-stagger by section
-  const sections = document.querySelectorAll('section');
-  sections.forEach(section => {
-    const revealEls = section.querySelectorAll('.reveal');
-    revealEls.forEach((el, index) => {
-      // If element has no explicit delay, apply sequential stagger
-      if (!el.dataset.delay) {
-        el.dataset.delay = String(index * 90);
+  "navigation": [
+    { "label": "Start",      "href": "./index.html" },
+    { "label": "Leistungen", "href": "./leistungen.html" },
+    { "label": "Fotos",      "href": "./fotos.html" },
+    { "label": "Kontakt",    "href": "./kontakt.html" }
+  ],
+
+  "pages": {
+
+    "index": {
+      "hero": {
+        "tagline":   "Zuverlässig · Sauber · Professionell",
+        "headline":  "Ihr persönlicher\nHausmeisterservice",
+        "subline":   "Garten & Landschaftsbau · Renovierung · Innenausbau – alles aus einer Hand.",
+        "cta1Label": "Angebot anfragen",
+        "cta1Href":  "./kontakt.html",
+        "cta2Label": "Leistungen ansehen",
+        "cta2Href":  "./leistungen.html"
+      },
+      "about": {
+        "eyebrow":  "Wer steckt dahinter",
+        "headline": "Handwerk mit Haltung",
+        "text":     "Mein Name ist Philipp Dehnhardt. Als selbstständiger Hausmeister bin ich Ihr direkter Ansprechpartner – ohne Subunternehmer, ohne Umwege. Ich übernehme jeden Auftrag persönlich, führe ihn sauber und termingerecht aus und stehe für meine Arbeit mit meinem Namen ein. Was ich anfange, bringe ich zu Ende. Und das sehen Sie.",
+        "badgeText": "Solo-Betrieb – Sie sprechen immer direkt mit mir"
+      },
+      "services": {
+        "eyebrow":  "Meine Leistungen",
+        "headline": "Alles aus einer Hand",
+        "items": [
+          { "icon": "leaf",   "title": "Garten & Landschaftsbau", "text": "Von der Neugestaltung bis zur regelmäßigen Pflege – ich sorge dafür, dass Ihr Außenbereich das ganze Jahr über einen gepflegten Eindruck hinterlässt.", "href": "./leistungen.html" },
+          { "icon": "hammer", "title": "Renovierung",             "text": "Bodenbeläge, Malerarbeiten, Bad & Küche – ich renoviere mit dem Blick fürs Detail und dem Anspruch, dass es beim ersten Mal stimmt.", "href": "./leistungen.html" },
+          { "icon": "house",  "title": "Innenausbau",             "text": "Trockenbau, Verkleidungen, maßgefertigte Lösungen – ich gestalte Innenräume so, wie Sie es sich vorstellen. Kein Kompromiss bei Qualität.", "href": "./leistungen.html" }
+        ]
+      },
+      "usp": {
+        "eyebrow":  "Warum Dehnhardt?",
+        "headline": "Was mich von anderen unterscheidet",
+        "items": [
+          { "title": "Persönlicher Kontakt",   "text": "Sie sprechen immer direkt mit mir – dem Handwerker, der auch die Arbeit macht. Kein Callcenter, keine Weiterleitungen." },
+          { "title": "Keine Zwischenhändler",  "text": "Ich arbeite solo. Das bedeutet klare Kommunikation, faire Preise und volle Verantwortung für jedes Ergebnis." },
+          { "title": "Terminzuverlässigkeit",  "text": "Ich erscheine zu dem Termin, den wir vereinbaren. Pünktlichkeit ist für mich keine Option, sondern Selbstverständlichkeit." },
+          { "title": "Sauberes Arbeiten",      "text": "Ich verlasse eine Baustelle so, wie ich sie vorfinden möchte: aufgeräumt, entstaubt und makellos sauber." }
+        ]
+      },
+      "cta": {
+        "headline": "Bereit für Ihr nächstes Projekt?",
+        "text":     "Rufen Sie mich an oder schreiben Sie mir eine kurze WhatsApp-Nachricht. Ich melde mich schnell – und ich meine das ernst.",
+        "btnLabel": "Jetzt Kontakt aufnehmen",
+        "btnHref":  "./kontakt.html"
       }
-      observer.observe(el);
-    });
-  });
+    },
 
-  // Also observe elements outside sections (hero already has reveal classes)
-  document.querySelectorAll('.reveal:not(section .reveal)').forEach((el, i) => {
-    if (!el.dataset.delay) el.dataset.delay = String(i * 80);
-    observer.observe(el);
-  });
-}
+    "leistungen": {
+      "header": {
+        "eyebrow":  "Was ich tue",
+        "headline": "Meine Leistungen im Überblick"
+      },
+      "intro": "Ich biete keine Leistungslisten, die ich nicht erfüllen kann. Was Sie hier sehen, führe ich persönlich aus – mit dem Anspruch, den ich selbst an meine Arbeit stelle.",
+      "items": [
+        {
+          "id":    "garten",
+          "icon":  "leaf",
+          "title": "Garten- & Landschaftsbau",
+          "intro": "Ein gepflegter Außenbereich ist keine Selbstverständlichkeit – er erfordert Sachverstand, Ausdauer und das richtige Gespür für Räume und Pflanzen. Genau das bringe ich mit.",
+          "leistungen": [
+            "Gartengestaltung und Neuanlage",
+            "Rasenpflege, -sanierung und -neuanlage",
+            "Pflanz- und Bepflanzungsarbeiten",
+            "Hecken- und Gehölzschnitt",
+            "Beete anlegen und pflegen",
+            "Pflasterarbeiten und Wegebau",
+            "Terrassen- und Sichtschutzanlagen",
+            "Laubbeseitigung und Grünschnitt"
+          ]
+        },
+        {
+          "id":    "renovierung",
+          "icon":  "hammer",
+          "title": "Renovierung",
+          "intro": "Renovierungen sind dann gut, wenn man sie nach Abschluss nicht mehr sieht – nur noch das Ergebnis. Ich arbeite mit hohem Anspruch an Oberflächen, Übergänge und saubere Kanten.",
+          "leistungen": [
+            "Malerarbeiten innen (Wände, Decken, Heizkörper)",
+            "Tapezierarbeiten",
+            "Bodenbeläge verlegen (Laminat, Vinyl, Fliesen)",
+            "Fliesenarbeiten in Bad und Küche",
+            "Trockenbauarbeiten",
+            "Türen und Fenster einbauen",
+            "Allgemeine Schönheitsreparaturen",
+            "Übergaberenovierungen"
+          ]
+        },
+        {
+          "id":    "innenausbau",
+          "icon":  "house",
+          "title": "Innenausbau",
+          "intro": "Innenausbau ist mehr als Funktionalität – es geht um Raumaufteilung, Atmosphäre und Langlebigkeit. Ich plane und führe Ausbauarbeiten durch, die dauerhaft halten.",
+          "leistungen": [
+            "Trennwände setzen (Rigips / Gipskarton)",
+            "Deckenverkleidungen",
+            "Einbauschränke und Nischen",
+            "Badezimmerausbau",
+            "Küchenmontage und -anpassung",
+            "Dämmarbeiten",
+            "Umbau und Raumaufteilung",
+            "Allgemeine Ausbauarbeiten nach Absprache"
+          ]
+        }
+      ],
+      "cta": {
+        "headline": "Haben Sie ein konkretes Projekt?",
+        "text":     "Schildern Sie mir kurz, was Sie benötigen. Ich nenne Ihnen schnell und unkompliziert einen Preis.",
+        "btnLabel": "Anfrage stellen",
+        "btnHref":  "./kontakt.html"
+      }
+    },
 
-/* ═══════════════════════════════════════════════════════════════
-   6.  STICKY HEADER ON SCROLL
-   ═══════════════════════════════════════════════════════════════ */
-function initStickyHeader() {
-  const header = document.getElementById('header');
-  if (!header) return;
+    "fotos": {
+      "header": {
+        "eyebrow":  "Einblick in meine Arbeit",
+        "headline": "Referenzfotos"
+      },
+      "intro": "Hier sehen Sie ausgewählte Beispiele meiner abgeschlossenen Projekte. Die Bilder werden laufend ergänzt.",
+      "categories": ["Alle", "Garten", "Renovierung", "Innenausbau"],
+      "photos": [
+        { "src": "./img/garten-01.jpg",      "alt": "Gartengestaltung – Neuanlage",      "category": "Garten" },
+        { "src": "./img/garten-02.jpg",      "alt": "Rasensanierung",                    "category": "Garten" },
+        { "src": "./img/garten-03.jpg",      "alt": "Pflasterarbeiten – Terrassenbereich","category": "Garten" },
+        { "src": "./img/renovierung-01.jpg", "alt": "Malerarbeiten – Wohnzimmer",        "category": "Renovierung" },
+        { "src": "./img/renovierung-02.jpg", "alt": "Laminat verlegen",                  "category": "Renovierung" },
+        { "src": "./img/renovierung-03.jpg", "alt": "Fliesenarbeiten – Badezimmer",      "category": "Renovierung" },
+        { "src": "./img/innenausbau-01.jpg", "alt": "Trockenbau – Trennwand",            "category": "Innenausbau" },
+        { "src": "./img/innenausbau-02.jpg", "alt": "Deckenverkleidung",                 "category": "Innenausbau" },
+        { "src": "./img/innenausbau-03.jpg", "alt": "Einbauschrank – Nische",            "category": "Innenausbau" }
+      ]
+    },
 
-  const onScroll = () => {
-    if (window.scrollY > 40) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    "kontakt": {
+      "header": {
+        "eyebrow":  "Sprechen wir",
+        "headline": "Kontakt aufnehmen"
+      },
+      "intro": "Ich bin kein Callcenter. Wenn Sie mich anrufen oder mir schreiben, sprechen Sie direkt mit mir – dem Handwerker, der auch Ihre Arbeiten ausführt.",
+      "channels": [
+        { "type": "phone",    "label": "Telefon",  "value": "+49 171 1083149",                      "href": "tel:+491711083149",                      "desc": "Anrufen – Mo. bis Sa., 7–18 Uhr" },
+        { "type": "whatsapp", "label": "WhatsApp", "value": "Direkt schreiben",                     "href": "https://wa.me/491711083149",              "desc": "Kurze Nachricht genügt – ich antworte schnell" },
+        { "type": "email",    "label": "E-Mail",   "value": "info@hausmeisterservice-dehnhardt.de", "href": "mailto:info@hausmeisterservice-dehnhardt.de", "desc": "Für ausführlichere Anfragen" }
+      ],
+      "mapEmbedSrc": "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d83975.08403433516!2d10.0!3d53.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sde!2sde!4v1234567890",
+      "mapNote":     "Bitte die tatsächliche Adresse in der kunde.json eintragen – dann wird die Karte korrekt geladen."
+    },
+
+    "impressum": {
+      "header": { "headline": "Impressum" },
+      "sections": [
+        { "title": "Angaben gemäß § 5 TMG", "content": "Philipp Dehnhardt\nHausmeisterservice Philipp Dehnhardt\n[Straße und Hausnummer]\n[PLZ] [Ort]" },
+        { "title": "Kontakt",               "content": "Telefon: +49 171 1083149\nE-Mail: info@hausmeisterservice-dehnhardt.de" },
+        { "title": "Steuerliche Angaben",   "content": "Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:\n[Bitte USt-IdNr. eintragen oder Hinweis auf Kleinunternehmerregelung § 19 UStG ergänzen]" },
+        { "title": "Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV", "content": "Philipp Dehnhardt\n[Straße und Hausnummer]\n[PLZ] [Ort]" },
+        { "title": "Haftung für Inhalte",   "content": "Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8–10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen." },
+        { "title": "Haftung für Links",     "content": "Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich." },
+        { "title": "Urheberrecht",          "content": "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers." }
+      ]
+    },
+
+    "datenschutz": {
+      "header": { "headline": "Datenschutzerklärung" },
+      "sections": [
+        { "title": "1. Datenschutz auf einen Blick",           "content": "Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können. Ausführliche Informationen zum Thema Datenschutz entnehmen Sie unserer unter diesem Text aufgeführten Datenschutzerklärung." },
+        { "title": "2. Verantwortliche Stelle",                "content": "Verantwortlich im Sinne der DSGVO ist:\n\nPhilipp Dehnhardt\nHausmeisterservice Philipp Dehnhardt\n[Straße und Hausnummer]\n[PLZ] [Ort]\n\nTelefon: +49 171 1083149\nE-Mail: info@hausmeisterservice-dehnhardt.de" },
+        { "title": "3. Datenerfassung auf dieser Website",     "content": "Diese Website verzichtet bewusst auf Kontaktformulare. Es werden keine personenbezogenen Daten durch Formulareingaben erfasst.\n\nBeim Besuch der Website werden automatisch technische Daten (IP-Adresse, Browsertyp, Referrer, Uhrzeit) vom Hosting-Anbieter (All-Inkl) serverseitig erfasst und in Server-Log-Dateien gespeichert. Diese Daten werden ausschließlich zur technischen Bereitstellung der Website verwendet und nicht mit anderen Datenquellen zusammengeführt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem technisch fehlerfreien Betrieb)." },
+        { "title": "4. Google Maps",                           "content": "Diese Website nutzt den Kartendienst Google Maps der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland. Zur Darstellung der Karte wird Ihre IP-Adresse an Server von Google übertragen und dort gespeichert. Der Anbieter dieser Seite hat keinen Einfluss auf diese Datenübertragung. Die Nutzung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer anschaulichen Standortdarstellung). Wenn Sie mit der Übertragung an Google nicht einverstanden sind, können Sie die Google Maps-Funktion durch Deaktivierung von JavaScript in Ihrem Browser unterbinden. Weitere Informationen finden Sie in der Datenschutzerklärung von Google: https://policies.google.com/privacy" },
+        { "title": "5. Ihre Rechte als betroffene Person",     "content": "Sie haben gemäß DSGVO folgende Rechte:\n\n– Auskunft über Ihre bei uns gespeicherten personenbezogenen Daten (Art. 15 DSGVO)\n– Berichtigung unrichtiger Daten (Art. 16 DSGVO)\n– Löschung Ihrer gespeicherten Daten (Art. 17 DSGVO)\n– Einschränkung der Datenverarbeitung (Art. 18 DSGVO)\n– Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)\n– Datenübertragbarkeit (Art. 20 DSGVO)\n\nZur Ausübung dieser Rechte wenden Sie sich an: info@hausmeisterservice-dehnhardt.de" },
+        { "title": "6. Beschwerderecht",                       "content": "Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung Ihrer personenbezogenen Daten durch uns zu beschweren. Die zuständige Aufsichtsbehörde richtet sich nach dem Bundesland Ihres Wohnsitzes." }
+      ]
     }
-  };
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll(); // run once on load
-}
+  },
 
-/* ═══════════════════════════════════════════════════════════════
-   7.  MOBILE NAV BURGER
-   ═══════════════════════════════════════════════════════════════ */
-function initMobileNav() {
-  const burger = document.getElementById('nav-burger');
-  const menu   = document.getElementById('mobile-menu');
-  if (!burger || !menu) return;
-
-  burger.addEventListener('click', () => {
-    const isOpen = burger.getAttribute('aria-expanded') === 'true';
-    burger.setAttribute('aria-expanded', String(!isOpen));
-    menu.classList.toggle('open', !isOpen);
-    menu.setAttribute('aria-hidden', String(isOpen));
-  });
-
-  // Close menu when a link is clicked
-  menu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      burger.setAttribute('aria-expanded', 'false');
-      menu.classList.remove('open');
-      menu.setAttribute('aria-hidden', 'true');
-    });
-  });
-
-  // Close on outside click
-  document.addEventListener('click', (e) => {
-    if (!burger.contains(e.target) && !menu.contains(e.target)) {
-      burger.setAttribute('aria-expanded', 'false');
-      menu.classList.remove('open');
-      menu.setAttribute('aria-hidden', 'true');
-    }
-  });
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   8.  SMOOTH ANCHOR LINKS
-   ═══════════════════════════════════════════════════════════════ */
-function initAnchorLinks() {
-  document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      const target = document.querySelector(link.getAttribute('href'));
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   9.  LOADER
-   ═══════════════════════════════════════════════════════════════ */
-function hideLoader() {
-  const loader = document.getElementById('loader');
-  if (!loader) return;
-  // Small delay so the first render paint is complete
-  requestAnimationFrame(() => {
-    setTimeout(() => loader.classList.add('hidden'), 200);
-  });
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   10. ERROR BANNER
-   ═══════════════════════════════════════════════════════════════ */
-function showErrorBanner() {
-  const banner = document.createElement('div');
-  banner.style.cssText = `
-    position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-    padding: 1rem; background: #7f1d1d; color: #fca5a5;
-    font-family: monospace; font-size: 0.85rem; text-align: center;
-  `;
-  banner.textContent = 'Fehler: kunde.json konnte nicht geladen werden. Bitte stelle sicher, dass die Datei im selben Verzeichnis liegt wie index.html.';
-  document.body.prepend(banner);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   HELPERS
-   ═══════════════════════════════════════════════════════════════ */
-
-/** Set textContent safely */
-function setText(id, text) {
-  const el = document.getElementById(id);
-  if (el && text !== undefined) el.textContent = text;
-}
-
-/** Set title tag via id */
-function setTitle(id, text) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = text;
-  document.title = text;
-}
-
-/** Set an attribute on an element */
-function setAttr(id, attr, value) {
-  const el = document.getElementById(id);
-  if (el && value !== undefined) el.setAttribute(attr, value);
-}
-
-/**
- * Escape HTML special characters to prevent XSS.
- * Used when injecting data-driven content via innerHTML.
- */
-function esc(str) {
-  if (typeof str !== 'string') return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;');
-}
-
-/**
- * Parse *word* or _word_ markers into <em> tags.
- * Intentionally minimal – only used for controlled CMS content.
- */
-function parseEmphasis(str) {
-  if (typeof str !== 'string') return '';
-  return esc(str)
-    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-    .replace(/_([^_]+)_/g, '<em>$1</em>');
+  "footer": {
+    "tagline":   "Hausmeisterservice mit Haltung.",
+    "copyright": "© 2025 Philipp Dehnhardt – Hausmeisterservice. Alle Rechte vorbehalten.",
+    "links": [
+      { "label": "Impressum",   "href": "./impressum.html" },
+      { "label": "Datenschutz", "href": "./datenschutz.html" }
+    ]
+  }
 }

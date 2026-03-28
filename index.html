@@ -1,212 +1,50 @@
 <!DOCTYPE html>
-<html lang="de" data-theme="dark">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" id="meta-description" content="" />
-  <meta name="robots" content="index, follow" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" id="og-title" content="" />
-  <meta property="og:description" id="og-description" content="" />
-  <title id="page-title">Laden…</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Preconnect for Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Fraunces (editorial serif display) + Barlow (clean utility body) -->
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Titel und Description werden via app.js aus kunde.json gesetzt -->
+  <title>Hausmeisterservice Philipp Dehnhardt</title>
+  <meta name="description" content="">
 
-  <link rel="stylesheet" href="style.css" />
+  <!-- SEO: Canonical + Robots -->
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="Hausmeisterservice Philipp Dehnhardt">
+  <meta property="og:description" content="Garten & Landschaftsbau, Renovierung und Innenausbau – professionell, zuverlässig, persönlich.">
+  <meta property="og:locale"      content="de_DE">
+
+  <!-- Google Fonts: Barlow Condensed (Display) + Barlow (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Zentrales Stylesheet -->
+  <link rel="stylesheet" href="./style.css">
 </head>
-<body>
+<!--
+  data-page: Wird von app.js ausgelesen, um den seitenspezifischen
+  Content-Renderer zu aktivieren.
+-->
+<body data-page="index">
 
-  <!-- ░░░ LOADING SCREEN ░░░ -->
-  <div id="loader" class="loader" aria-hidden="true">
-    <div class="loader__dot"></div>
-    <div class="loader__dot"></div>
-    <div class="loader__dot"></div>
-  </div>
+  <!-- Mount: Navigation (app.js rendert hier die globale Nav) -->
+  <div id="nav-mount"></div>
 
-  <!-- ░░░ HEADER / NAV ░░░ -->
-  <header class="header" id="header">
-    <nav class="nav container" aria-label="Hauptnavigation">
-      <a class="nav__brand" href="#top" id="nav-brand">
-        <span class="nav__brand-mark">KAD</span>
-        <span class="nav__brand-label" id="nav-brand-label"></span>
-      </a>
-      <ul class="nav__links" role="list">
-        <li><a href="#leistungen" class="nav__link">Leistungen</a></li>
-        <li><a href="#ueber" class="nav__link">Über mich</a></li>
-        <li><a href="#einsatzgebiet" class="nav__link">Einsatzgebiet</a></li>
-        <li>
-          <a href="#" class="nav__cta btn btn--accent" id="nav-cta-btn" target="_blank" rel="noopener noreferrer">Anfragen</a>
-        </li>
-      </ul>
-      <button class="nav__burger" id="nav-burger" aria-label="Menü öffnen" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </nav>
-    <div class="nav__mobile-menu" id="mobile-menu" aria-hidden="true">
-      <ul role="list">
-        <li><a href="#leistungen" class="nav__link">Leistungen</a></li>
-        <li><a href="#ueber" class="nav__link">Über mich</a></li>
-        <li><a href="#einsatzgebiet" class="nav__link">Einsatzgebiet</a></li>
-      </ul>
-    </div>
-  </header>
+  <!-- Mount: Haupt-Inhalt (app.js rendert hier den seiten-spezifischen Inhalt) -->
+  <main id="content-mount" aria-label="Hauptinhalt"></main>
 
-  <main id="top">
+  <!-- Mount: Footer (app.js rendert hier den globalen Footer) -->
+  <div id="footer-mount"></div>
 
-    <!-- ░░░ HERO SECTION ░░░ -->
-    <section class="hero" id="hero" aria-labelledby="hero-headline">
-      <div class="hero__bg-grid" aria-hidden="true"></div>
-      <div class="hero__noise" aria-hidden="true"></div>
+  <!-- Mount: Mobile Sticky Bar (app.js rendert hier die Action Bar) -->
+  <div id="mobile-bar-mount"></div>
 
-      <div class="container hero__inner">
-        <div class="hero__content">
-          <div class="hero__badge reveal" id="hero-badge"></div>
+  <!-- Haupt-JavaScript: lädt kunde.json und rendert alles -->
+  <script src="./app.js" defer></script>
 
-          <h1 class="hero__headline reveal" id="hero-headline"></h1>
-          <p class="hero__subline reveal" id="hero-subline"></p>
-
-          <div class="hero__actions reveal" id="hero-actions"></div>
-
-          <div class="hero__stats reveal" id="hero-stats"></div>
-        </div>
-
-        <div class="hero__visual reveal" aria-hidden="true">
-          <div class="hero__card-stack">
-            <div class="hero__card hero__card--back glass-card">
-              <span class="hero__card-icon">🌿</span>
-            </div>
-            <div class="hero__card hero__card--front glass-card">
-              <span class="hero__card-icon">🔨</span>
-              <span class="hero__card-label">Direkt. Persönlich.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero__scroll-hint" aria-hidden="true">
-        <span class="hero__scroll-line"></span>
-        <span class="hero__scroll-text">Scroll</span>
-      </div>
-    </section>
-
-    <!-- ░░░ LEISTUNGEN SECTION ░░░ -->
-    <section class="leistungen section" id="leistungen" aria-labelledby="leistungen-headline">
-      <div class="container">
-        <header class="section__header reveal">
-          <h2 class="section__headline" id="leistungen-headline"></h2>
-          <p class="section__subline" id="leistungen-subline"></p>
-        </header>
-        <!-- Bento Grid – injected by app.js -->
-        <div class="bento-grid" id="leistungen-grid" role="list"></div>
-      </div>
-    </section>
-
-    <!-- ░░░ ÜBER MICH SECTION ░░░ -->
-    <section class="ueber section" id="ueber" aria-labelledby="ueber-headline">
-      <div class="container ueber__inner">
-        <div class="ueber__visual reveal" aria-hidden="true">
-          <div class="ueber__portrait-frame glass-card">
-            <div class="ueber__portrait-placeholder">
-              <span class="ueber__portrait-initials">PD</span>
-              <span class="ueber__portrait-hint">Ihr Foto hier</span>
-            </div>
-            <div class="ueber__portrait-badge">
-              <span>Solo-Experte</span>
-            </div>
-          </div>
-        </div>
-        <div class="ueber__text">
-          <header class="section__header section__header--left reveal">
-            <h2 class="section__headline" id="ueber-headline"></h2>
-            <p class="section__subline" id="ueber-subline"></p>
-          </header>
-          <p class="ueber__absatz reveal" id="ueber-absatz1"></p>
-          <p class="ueber__absatz reveal" id="ueber-absatz2"></p>
-          <ul class="ueber__werte reveal" id="ueber-werte" role="list" aria-label="Meine Werte"></ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ░░░ GALERIE SECTION ░░░ -->
-    <section class="galerie section" id="galerie" aria-labelledby="galerie-headline">
-      <div class="container">
-        <header class="section__header reveal">
-          <h2 class="section__headline" id="galerie-headline"></h2>
-          <p class="section__subline" id="galerie-subline"></p>
-        </header>
-        <div class="galerie__grid reveal" id="galerie-grid" role="list" aria-label="Projektbilder"></div>
-      </div>
-    </section>
-
-    <!-- ░░░ EINSATZGEBIET SECTION ░░░ -->
-    <section class="einsatzgebiet section" id="einsatzgebiet" aria-labelledby="einsatz-headline">
-      <div class="container">
-        <header class="section__header reveal">
-          <h2 class="section__headline" id="einsatz-headline"></h2>
-          <p class="section__subline einsatz__subline" id="einsatz-subline"></p>
-        </header>
-        <div class="einsatz__map-wrap glass-card reveal">
-          <!-- Kartenplatzhalter – kann durch Leaflet.js oder Google Maps Iframe ersetzt werden -->
-          <div id="map-placeholder" class="map-placeholder" aria-label="Karte des Einsatzgebiets">
-            <div class="map-placeholder__inner">
-              <span class="map-placeholder__icon">📍</span>
-              <p class="map-placeholder__text">Kartenintegration (z. B. Google Maps Iframe oder Leaflet.js) hier einfügen.</p>
-              <code class="map-placeholder__code">id="map-container"</code>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ░░░ FOOTER ░░░ -->
-  <footer class="footer" id="footer">
-    <div class="container footer__inner">
-
-      <div class="footer__brand">
-        <a class="footer__brand-link" href="#top">
-          <span class="nav__brand-mark">KAD</span>
-        </a>
-        <p class="footer__tagline" id="footer-tagline"></p>
-        <div class="footer__socials" id="footer-socials"></div>
-      </div>
-
-      <div class="footer__legal">
-        <!-- Impressum -->
-        <details class="footer__details">
-          <summary class="footer__summary" id="impressum-headline">Impressum</summary>
-          <div class="footer__details-body" id="impressum-body"></div>
-        </details>
-        <!-- Datenschutz -->
-        <details class="footer__details">
-          <summary class="footer__summary" id="datenschutz-headline">Datenschutz</summary>
-          <div class="footer__details-body" id="datenschutz-body"></div>
-        </details>
-      </div>
-
-    </div>
-    <div class="footer__bottom container">
-      <p class="footer__copyright" id="footer-copyright"></p>
-    </div>
-  </footer>
-
-  <!-- ░░░ STICKY ACTION BAR (Mobile only) ░░░ -->
-  <div class="sticky-bar" id="sticky-bar" role="complementary" aria-label="Kontakt-Schnellzugriff">
-    <a href="#" class="sticky-bar__btn sticky-bar__btn--call" id="sticky-call-btn" aria-label="Jetzt anrufen">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.62 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.53 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.68a16 16 0 0 0 6.59 6.59l.87-.87a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      <span>Anrufen</span>
-    </a>
-    <a href="#" class="sticky-bar__btn sticky-bar__btn--whatsapp" id="sticky-whatsapp-btn" aria-label="WhatsApp schreiben" target="_blank" rel="noopener noreferrer">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
-      <span>WhatsApp</span>
-    </a>
-  </div>
-
-  <script src="app.js" defer></script>
 </body>
 </html>
